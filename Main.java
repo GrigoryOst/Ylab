@@ -1,7 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -16,24 +15,23 @@ public class Main {
     public static int size;
     public static int block;
 
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         startGame();
     }
 
-    static void startGame() throws IOException {
-        String human = "Человек выйграл!!!";
-        String computer = "Компьютер выйграл!";
+    static void startGame() {
+        String humanX = "Человек Х выиграл!!!";
+        String humanO = "Человек О выиграл!!!";
         String draw = "Ничья!";
         customizeGame();
         initGameMap();
         paintGameMap();
         while (true) {
-            humanTurn();
+            humanTurnX();
             paintGameMap();
-            if (chekWin(X_DOT)) {
-                FileResultWriter.writeFile(human);
-                System.out.println(human);
+            if (cheсkWin(X_DOT)) {
+                FileResultWriter.writeFile(humanX);
+                System.out.println(humanX);
                 break;
             }
             if (isMapFull()) {
@@ -41,11 +39,12 @@ public class Main {
                 System.out.println(draw);
                 break;
             }
-            computeTurn();
+            humanTurnO();
             paintGameMap();
-            if (chekWin(O_DOT)) {
-                FileResultWriter.writeFile(computer);
-                System.out.println(computer);
+            if (cheсkWin(O_DOT)) {
+                FileResultWriter.writeFile(humanO);
+                System.out.println(humanO);
+                break;
             }
             if (isMapFull()) {
                 FileResultWriter.writeFile(draw);
@@ -54,7 +53,6 @@ public class Main {
             }
         }
         System.out.println("Игра закончена!");
-
     }
 
     static void customizeGame() {
@@ -68,7 +66,7 @@ public class Main {
         } while (block < 3 || block > size);
     }
 
-    static boolean chekWin(char symb) {
+    static boolean cheсkWin(char symb) {
         for (int col = 0; col < size - block + 1; col++) {
             for (int row = 0; row < size - block + 1; row++) {
                 if (checkDiagonal(symb, col, row) || checkLanes(symb, col, row)) return true;
@@ -111,25 +109,20 @@ public class Main {
         return true;
     }
 
-    static void computeTurn() {
-        System.out.println("Компьютер думает...");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
+    static void humanTurnO() {
         int x, y;
-        Random random = new Random();
         do {
-            x = random.nextInt(size);
-            y = random.nextInt(size);
+            System.out.println("Игрок О введите координаты в формате X Y (пример: минимум 1 1, максимум 3 3)");
+            x = sc.nextInt() - 1;
+            y = sc.nextInt() - 1;
         } while (!isValidCell(x, y));
         gameMap[y][x] = O_DOT;
     }
 
-    static void humanTurn() {
+    static void humanTurnX() {
         int x, y;
         do {
-            System.out.println("Пожалуйста введите координаты в формате X Y (пример: минимум 1 1, максимум 3 3)");
+            System.out.println("Игрок Х введите координаты в формате X Y (пример: минимум 1 1, максимум 3 3)");
             x = sc.nextInt() - 1;
             y = sc.nextInt() - 1;
         } while (!isValidCell(x, y));
@@ -166,12 +159,11 @@ class FileResultWriter {
     private static final String FILE_NAME = "rating.txt";
 
     public static void writeFile(String text) {
-
         try {
             FileWriter writer = new FileWriter(FILE_NAME, true);
             BufferedWriter bufferWriter = new BufferedWriter(writer);
             bufferWriter.write(text + "\n");
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
     }
 }
-
